@@ -11,5 +11,5 @@ export default function NavbarWrapper() {
         return null;
     }
 
-    return <Navbar title="Portal" />;
+    return <Navbar title="InternHub" />;
 }

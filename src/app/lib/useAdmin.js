@@ -173,3 +173,138 @@ export const updateProfile = async (id, updates) => {
     return data.update_users_by_pk;
 };
 
+export const getDeptInterns = async (deptId) => {
+    const query = `
+        query GetDeptInterns($deptId: Int!) {
+            users(where: { 
+                role: { _eq: "Intern" }, 
+                deptartment_id: { _eq: $deptId }
+            }) {
+                id
+                name
+            }
+        }
+    `;
+    const data = await hasuraRequest(query, { deptId });
+    return data.users;
+};
+
+// 2. Create a new task
+export const createTask = async (taskObject) => {
+    const mutation = `
+        mutation CreateTask($object: tasks_insert_input!) {
+            insert_tasks_one(object: $object) {
+                id
+                title
+            }
+        }
+    `;
+    const data = await hasuraRequest(mutation, { object: taskObject });
+    return data.insert_tasks_one;
+};
+
+// 3. Fetch all tasks for a department (for your Manage page)
+export const getDepartmentTasks = async (deptId) => {
+    const query = `
+        query GetDepartmentTasks($deptId: Int!) {
+            tasks(where: { department_id: { _eq: $deptId } }, order_by: { created_at: desc }) {
+                id
+                title
+                description
+                status
+                priority
+                due_date
+                user { 
+                    name 
+                }
+            }
+        }
+    `;
+    const data = await hasuraRequest(query, { deptId });
+    return data.tasks;
+};
+
+export const deleteTask = async (taskId) => {
+    const mutation = `
+        mutation DeleteTask($id: Int!) {
+            delete_tasks_by_pk(id: $id) {
+                id
+            }
+        }
+    `;
+    const data = await hasuraRequest(mutation, { id: parseInt(taskId) });
+    return data.delete_tasks_by_pk;
+};
+
+// Fetch a single task by its ID
+export const getTaskById = async (taskId) => {
+    const query = `
+        query GetTaskById($id: Int!) {
+            tasks_by_pk(id: $id) {
+                id
+                title
+                description
+                priority
+                status
+                due_date
+                assigned_to
+            }
+        }
+    `;
+    const data = await hasuraRequest(query, { id: parseInt(taskId) });
+    return data.tasks_by_pk;
+};
+
+// Update an existing task
+export const updateTask = async (taskId, updateObject) => {
+    const mutation = `
+        mutation UpdateTask($id: Int!, $object: tasks_set_input!) {
+            update_tasks_by_pk(pk_columns: { id: $id }, _set: $object) {
+                id
+                title
+            }
+        }
+    `;
+    const data = await hasuraRequest(mutation, { 
+        id: parseInt(taskId), 
+        object: updateObject 
+    });
+    return data.update_tasks_by_pk;
+};
+
+// Fetch tasks specifically assigned to one intern
+export const getInternTasks = async (internId) => {
+    const query = `
+        query GetInternTasks($internId: Int!) {
+            tasks(where: { assigned_to: { _eq: $internId } }, order_by: { created_at: desc }) {
+                id
+                title
+                description
+                status
+                priority
+                due_date
+                department_name
+            }
+        }
+    `;
+    const data = await hasuraRequest(query, { internId: parseInt(internId) });
+    return data.tasks;
+};
+
+// Update only the status of a specific task
+export const updateTaskStatus = async (taskId, newStatus) => {
+    const mutation = `
+        mutation UpdateTaskStatus($id: Int!, $status: String!) {
+            update_tasks_by_pk(pk_columns: { id: $id }, _set: { status: $status }) {
+                id
+                status
+            }
+        }
+    `;
+    const data = await hasuraRequest(mutation, { 
+        id: parseInt(taskId), 
+        status: newStatus 
+    });
+    return data.update_tasks_by_pk;
+};
+

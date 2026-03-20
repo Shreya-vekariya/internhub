@@ -2,12 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+// Import the functions from your lib
+import { getDeptInterns, createTask } from '../../../../lib/useAdmin'; 
 
 export default function CreateTaskPage() {
-    
     const router = useRouter();
     const { user } = useSelector((state) => state.auth);
-    console.log("Current User from Redux:", user);
+
+    console.log("DEBUG: Component Rendered");
+    console.log("DEBUG: User Object:", user);
+    console.log("DEBUG: Dept ID Value:", user?.deptartment_id);
+    
     const [interns, setInterns] = useState([]);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,74 +23,46 @@ export default function CreateTaskPage() {
         due_date: ''
     });
 
-    // 1. Fetch interns in the Head's department
+    // 1. Fetch interns using the new utility function
     useEffect(() => {
         const fetchInterns = async () => {
-            //console.log("Fetching interns for dept:", user.deptartment_id); // This should show in browser
             try {
-                const res = await fetch('/api/tasks', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        action: 'FETCH_INTERNS', 
-                        deptId: user.deptartment_id 
-                    }),
-                });
-                const result = await res.json();
-                console.log("API Result:", result); 
-                
-                // Set the interns state
-                setInterns(result || []); 
+                const data = await getDeptInterns(user.dept_id);
+                setInterns(data);
             } catch (error) {
                 console.error("Fetch Error:", error);
             }
         };
 
-        if (user?.deptartment_id) {
+        if (user?.dept_id) {
             fetchInterns();
-        } else {
-            console.log("No Dept ID found, skipping fetch.");
         }
     }, [user]);
 
-    console.log(interns)
+    
 
-    // 2. Handle Form Submission
+    // 2. Handle Form Submission using the utility function
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+    e.preventDefault();
 
-        const taskPayload = {
+    try {
+        const taskObject = {
             title: formData.title,
             description: formData.description,
             priority: formData.priority,
             due_date: formData.due_date,
-            assigned_to: parseInt(formData.assigned_to), 
-            department_id: user.deptartment_id, 
-            department_name: user.department_name || user.department?.name, 
-            created_by: user.id,
+            assigned_to: parseInt(formData.assigned_to),
+            department_id: user.dept_id, // This is all you need!
             status: "Pending"
         };
 
-        try {
-            const res = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'CREATE', taskData: taskPayload }),
-            });
-
-            if (res.ok) {
-                router.push('/Head/tasks'); 
-            } else {
-                const err = await res.json();
-                alert("Error: " + (err.message || "Failed to create task"));
-            }
-        } catch (error) {
-            console.error("Submission error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+        await createTask(taskObject);
+        alert("Task created successfully!");
+        router.push('/Head/tasks');
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+};
 
     return (
         <div className="p-8 bg-[#0f172a] min-h-screen text-white">
@@ -101,7 +78,6 @@ export default function CreateTaskPage() {
                 
                 <div className="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Task Title */}
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Task Title</label>
                             <input 
@@ -112,7 +88,6 @@ export default function CreateTaskPage() {
                             />
                         </div>
 
-                        {/* Description */}
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Description</label>
                             <textarea 
@@ -123,20 +98,22 @@ export default function CreateTaskPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Intern Selection */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Assign To Intern</label>
                                 <select 
-                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white"
                                     onChange={(e) => setFormData({...formData, assigned_to: e.target.value})}
                                     required
                                 >
                                     <option value="">Select an Intern</option>
-                                    {interns.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
+                                    {interns.map(i => (
+                                        <option key={i.id} value={i.id} className="bg-[#0f172a]">
+                                            {i.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
 
-                            {/* Priority */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Priority Level</label>
                                 <select 
@@ -152,18 +129,16 @@ export default function CreateTaskPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Due Date */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Due Date</label>
                                 <input 
                                     type="date"
-                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all color-scheme-dark"
+                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     onChange={(e) => setFormData({...formData, due_date: e.target.value})}
                                     required
                                 />
                             </div>
 
-                            {/* Automatic Dept (Disabled) */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Department (Auto)</label>
                                 <input 
@@ -190,4 +165,4 @@ export default function CreateTaskPage() {
             </div>
         </div>
     );
-}
+}   

@@ -1,9 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 
-export default function HeadDashboard() {
+function DashboardContent() {
+    const searchParams = useSearchParams();
+    const externalSearch = searchParams.get('search');
+
     const { user } = useSelector((state) => state.auth);
     const [interns, setInterns] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +15,14 @@ export default function HeadDashboard() {
 
     const router = useRouter();
 
-    console.log(interns)
+    // Initialize searchTerm from URL on mount
+    useEffect(() => {
+        if (externalSearch) {
+            setSearchTerm(externalSearch);
+        }
+    }, [externalSearch]);
+
+    // Fetch Interns Data
     useEffect(() => {
         const deptId = user?.dept_id || user?.deptartment_id;
         if (deptId) {
@@ -30,15 +41,25 @@ export default function HeadDashboard() {
     });
 
     return (
-        <div className="p-8 bg-[#0f172a] min-h-screen text-slate-200"> {/* Deep Navy Background */}
+        <div className="p-8 bg-[#0f172a] min-h-screen text-slate-200">
             <div className="max-w-6xl mx-auto">
                 
                 {/* Header Section */}
-                <div className="mb-8 border-l-4 border-indigo-500 pl-4">
-                    <h1 className="text-3xl font-extrabold text-white tracking-tight">
-                        Department <span className="text-indigo-400">Interns</span>
-                    </h1>
-                    <p className="text-slate-400 mt-1">Real-time management for your assigned personnel.</p>
+                <div className="mb-8 border-l-4 border-indigo-500 pl-4 flex justify-between items-end">
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-white tracking-tight">
+                            Department <span className="text-indigo-400">Interns</span>
+                        </h1>
+                        <p className="text-slate-400 mt-1">Real-time management for your assigned personnel.</p>
+                    </div>
+                    {searchTerm && (
+                        <button 
+                            onClick={() => {setSearchTerm(""); router.replace('/Head/dashboard')}}
+                            className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1 px-3 rounded-lg transition-colors border border-slate-700"
+                        >
+                            Clear Search ✕
+                        </button>
+                    )}
                 </div>
 
                 {/* Search & Filter Bar */}
@@ -51,7 +72,7 @@ export default function HeadDashboard() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <span className="absolute left-4 top-4.5 text-slate-500">🔍</span>
+                        <span className="absolute left-4 top-4 text-slate-500">🔍</span>
                     </div>
                     
                     <select 
@@ -75,6 +96,7 @@ export default function HeadDashboard() {
                                 <th className="px-6 py-5 font-semibold">College</th>
                                 <th className="px-6 py-5 font-semibold text-center">Gender</th>
                                 <th className="px-6 py-5 font-semibold text-center">Action</th>
+                                <th className="px-6 py-5 font-semibold text-center">Tasks Count</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800">
@@ -105,24 +127,29 @@ export default function HeadDashboard() {
                                         <td className="px-6 py-5 text-center">
                                             <div className="flex items-center justify-center gap-3">
                                                 <button 
-                                                onClick={() => router.push(`/${intern.id}/view`)} 
-                                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[80px]"
+                                                    onClick={() => router.push(`/${intern.id}/view`)} 
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[80px]"
                                                 >
-                                                View
+                                                    View
                                                 </button>
                                                 <button 
-                                                onClick={() => router.push(`/${intern.id}/edit`)} 
-                                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[100px]"
+                                                    onClick={() => router.push(`/Head/tasks?search=${encodeURIComponent(intern.name)}`)} 
+                                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[100px]"
                                                 >
-                                                Edit Task
+                                                    Edit Task
                                                 </button>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 text-center">
+                                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-sm">
+                                                {intern.task_count || 0}
                                             </div>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-20 text-center">
+                                    <td colSpan="5" className="px-6 py-20 text-center">
                                         <div className="text-slate-500 text-lg">No matches found for "<span className="text-indigo-400">{searchTerm}</span>"</div>
                                     </td>
                                 </tr>
@@ -141,5 +168,13 @@ export default function HeadDashboard() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function HeadDashboard() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#0f172a] text-white p-8">Loading Dashboard...</div>}>
+            <DashboardContent />
+        </Suspense>
     );
 }

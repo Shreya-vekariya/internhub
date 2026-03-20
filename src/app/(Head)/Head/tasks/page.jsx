@@ -1,30 +1,33 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react'; // Added Suspense
+import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
 import { useSelector } from 'react-redux';
+import { getDepartmentTasks, deleteTask } from '../../../lib/useAdmin';
 
-export default function ManageTasks() {
+function TasksContent() { // Wrapped existing logic into a sub-component
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const querySearch = searchParams.get('search') || ''; // Get name from URL
+
     const { user } = useSelector((state) => state.auth);
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('All');
+    const [priorityFilter, setPriorityFilter] = useState('All');
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // 1. Fetch tasks on component mount
+    // Set the search term if it exists in the URL
+    useEffect(() => {
+        if (querySearch) {
+            setSearchTerm(querySearch);
+        }
+    }, [querySearch]);
+
     const fetchTasks = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    action: 'FETCH', 
-                    deptId: user?.deptartment_id // Using your DB typo 'deptartment_id'
-                }),
-            });
-            const result = await response.json();
-            if (result) {
-                setTasks(result);
-            }
+            const data = await getDepartmentTasks(user?.dept_id);
+            if (data) setTasks(data);
         } catch (error) {
             console.error("Error fetching tasks:", error);
         } finally {
@@ -33,34 +36,19 @@ export default function ManageTasks() {
     };
 
     useEffect(() => {
-        if (user?.deptartment_id) {
-            fetchTasks();
-        }
+        if (user?.dept_id) fetchTasks();
     }, [user]);
 
-    // 2. Delete Task Function
     const handleDelete = async (taskId) => {
         if (!confirm("Are you sure you want to delete this task?")) return;
-
         try {
-            const response = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    action: 'DELETE', 
-                    taskId: taskId 
-                }),
-            });
-            if (response.ok) {
-                // Remove from local state to update UI immediately
-                setTasks(tasks.filter(t => t.id !== taskId));
-            }
+            await deleteTask(taskId);
+            setTasks(tasks.filter(t => t.id !== taskId));
         } catch (error) {
-            console.error("Delete failed:", error);
+            alert("Could not delete task: " + error.message);
         }
     };
 
-    // Helper for Status colors
     const getStatusStyle = (status) => {
         switch (status) {
             case 'Completed': return 'bg-green-900/30 text-green-400';
@@ -72,15 +60,8 @@ export default function ManageTasks() {
 
     return (
         <div className="p-8 bg-[#0f172a] min-h-screen text-white font-sans">
-            {/* Header Section */}
             <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Manage Tasks</h1>
-                    <p className="text-slate-400 text-sm mt-1">
-                        Department: <span className="text-blue-400 font-medium uppercase">{user?.department_name || "Unassigned"}</span>
-                    </p>
-                </div>
-                
+                <h1 className="text-2xl font-bold tracking-tight">Manage Tasks</h1>
                 <button 
                     onClick={() => router.push('/Head/tasks/create')}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-all shadow-lg active:scale-95"
@@ -89,7 +70,31 @@ export default function ManageTasks() {
                 </button>
             </div>
 
-            {/* The Tasks Table */}
+            <div className="flex flex-wrap gap-4 mb-6">
+                <input 
+                    type="text"
+                    placeholder="Search by intern name..."
+                    className="bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2 text-sm outline-none focus:border-indigo-500 min-w-[250px]"
+                    value={searchTerm} // Controlled input
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                
+                <select className="bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2 text-sm outline-none focus:border-indigo-500" onChange={(e) => setStatusFilter(e.target.value)}>
+                    <option value="All">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="In Review">In Review</option>
+                    <option value="Completed">Completed</option>
+                </select>
+
+                <select className="bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2 text-sm outline-none focus:border-indigo-500" onChange={(e) => setPriorityFilter(e.target.value)}>
+                    <option value="All">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+
             <div className="bg-[#1e293b] rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-[#0f172a]/50 text-slate-400 text-xs uppercase tracking-wider font-semibold">
@@ -103,15 +108,16 @@ export default function ManageTasks() {
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                         {loading ? (
-                            <tr>
-                                <td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">Loading tasks...</td>
-                            </tr>
-                        ) : tasks.length === 0 ? (
-                            <tr>
-                                <td colSpan="5" className="px-6 py-10 text-center text-slate-500">No tasks found for your department.</td>
-                            </tr>
+                            <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">Loading tasks...</td></tr>
                         ) : (
-                            tasks.map((task) => (
+                            tasks
+                            .filter(task => {
+                                const matchesStatus = statusFilter === 'All' || task.status === statusFilter;
+                                const matchesPriority = priorityFilter === 'All' || task.priority === priorityFilter;
+                                const matchesSearch = (task.user?.name || "").toLowerCase().includes(searchTerm.toLowerCase());
+                                return matchesStatus && matchesPriority && matchesSearch;
+                            })
+                            .map((task) => (
                                 <tr key={task.id} className="hover:bg-slate-800/40 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="font-medium text-slate-200">{task.title}</div>
@@ -139,21 +145,11 @@ export default function ManageTasks() {
                                             • {task.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-center">
                                         <div className="flex justify-center items-center gap-3">
-                                            <button 
-                                                onClick={() => router.push(`/Head/tasks/edit/${task.id}`)}
-                                                className="text-slate-400 hover:text-blue-400 transition-colors text-sm font-medium"
-                                            >
-                                                Edit
-                                            </button>
+                                            <button onClick={() => router.push(`/Head/tasks/edit/${task.id}`)} className="text-slate-400 hover:text-blue-400 transition-colors text-sm font-medium">Edit</button>
                                             <div className="w-[1px] h-4 bg-slate-700"></div>
-                                            <button 
-                                                onClick={() => handleDelete(task.id)}
-                                                className="text-slate-400 hover:text-red-400 transition-colors text-sm font-medium"
-                                            >
-                                                Delete
-                                            </button>
+                                            <button onClick={() => handleDelete(task.id)} className="text-slate-400 hover:text-red-400 transition-colors text-sm font-medium">Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -163,5 +159,14 @@ export default function ManageTasks() {
                 </table>
             </div>
         </div>
+    );
+}
+
+// Main component with Suspense wrapper
+export default function ManageTasks() {
+    return (
+        <Suspense fallback={<div className="p-8 text-white">Loading...</div>}>
+            <TasksContent />
+        </Suspense>
     );
 }
