@@ -44,6 +44,7 @@ export default function AdminTasksPage() {
             case 'Completed': return 'bg-green-900/30 text-green-400';
             case 'In Progress': return 'bg-yellow-900/30 text-yellow-400';
             case 'In Review': return 'bg-purple-900/30 text-purple-400';
+            case 'Pending': return 'bg-red-900/30 text-red-400';
             default: return 'bg-slate-700/50 text-slate-300';
         }
     };

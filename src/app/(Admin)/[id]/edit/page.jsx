@@ -61,7 +61,7 @@ export default function EditUser() {
                 deptartment_id: parseInt(formData.deptartment_id)
             });
             alert("User updated successfully!");
-            router.push("/Admin");
+            router.push("/Admin/intern");
         } catch (error) {
             alert("Update failed: " + error.message);
         }

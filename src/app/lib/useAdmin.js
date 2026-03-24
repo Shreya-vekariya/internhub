@@ -123,22 +123,72 @@ export const getDepartments = async () => {
 };
 
 export const updateUser = async (id, updates) => {
-    const query = `
-        mutation UpdateUser($id: Int!, $set: users_set_input!) {
-            update_users_by_pk(pk_columns: {id: $id}, _set: $set) {
+	const isHead = updates.role === "Head";
+
+	const query = isHead
+		? `
+        mutation UpdateUser(
+            $id: Int!,
+            $set: users_set_input!,
+            $dept_id: Int!
+        ) {
+            # 1. Update user
+            updateUser: update_users_by_pk(
+                pk_columns: { id: $id },
+                _set: $set
+            ) {
                 id
-                name
                 role
-                email
-                college
-                gender         
                 deptartment_id
             }
+
+            # 2. Remove user as head from ANY previous department
+            clearOldHead: update_departments(
+                where: { head_id: { _eq: $id } }
+                _set: { head_id: null }
+            ) {
+                affected_rows
+            }
+
+            # 3. Assign user as head to new department
+            setNewHead: update_departments_by_pk(
+                pk_columns: { id: $dept_id }
+                _set: { head_id: $id }
+            ) {
+                id
+                head_id
+            }
         }
-    `;
-    // Pass the updates object directly into the _set variable
-    return await hasuraRequest(query, { id: parseInt(id), set: updates });
+        `
+		: `
+        mutation UpdateUser(
+            $id: Int!,
+            $set: users_set_input!
+        ) {
+            update_users_by_pk(
+                pk_columns: { id: $id },
+                _set: $set
+            ) {
+                id
+                role
+            }
+        }
+        `;
+
+	const variables = isHead
+		? {
+				id: parseInt(id),
+				set: updates,
+				dept_id: updates.deptartment_id,
+			}
+		: {
+				id: parseInt(id),
+				set: updates,
+			};
+
+	return await hasuraRequest(query, variables);
 };
+
 
 // Insert the new department
 export const addDepartment = async (name, headId) => {
@@ -306,5 +356,59 @@ export const updateTaskStatus = async (taskId, newStatus) => {
         status: newStatus 
     });
     return data.update_tasks_by_pk;
+};
+
+export const getDepartmentsList = async () => {
+	const query = `
+        query GetDeptsAndHeads {
+            departments(order_by: {id: asc}) {
+                id
+                name
+                head_id
+            }
+            users {
+                id
+                name
+            }
+        }
+    `;
+	const data = await hasuraRequest(query);
+
+	// Manual Join: Attach Head Name to each Department
+	return data.departments.map((dept) => {
+		const headUser = data.users.find(
+			(u) => String(u.id) === String(dept.head_id),
+		);
+		return {
+			...dept,
+			head_name: headUser ? headUser.name : "No Head Assigned",
+		};
+	});
+};
+
+// Fetch all departments for the dropdown list
+export const getUpdateDepartments = async () => {
+	const query = `
+        query {
+            departments(where: {head_id: {_is_null: true}}) {
+                id
+                name
+                head_id
+              }
+        }
+    `;
+
+	const res = await fetch(HASURA_URL, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"x-hasura-admin-secret": HASURA_ADMIN_SECRET,
+		},
+		body: JSON.stringify({ query }),
+	});
+
+	const json = await res.json();
+	if (json.errors) throw new Error(json.errors[0].message);
+	return json.data.departments;
 };
 
