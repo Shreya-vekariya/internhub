@@ -55,7 +55,7 @@ export default function Admin() {
 
         const matchesDept =
             deptFilter === "All" ||
-            String(user.deptartment_id) === String(deptFilter);
+            String(user.department_id) === String(deptFilter);
 
         return matchesSearch && matchesRole && matchesDept;
     });
@@ -171,7 +171,7 @@ export default function Admin() {
                                             </span>
                                         </div>
                                         <p className="text-slate-500 text-sm">
-                                            {user.email} • <span className="text-slate-400">{user.college || "No College"}</span>
+                                            {user.email} • <span className="text-slate-400">{user.college || ""}</span>
                                         </p>
                                     </div>
                                 </div>

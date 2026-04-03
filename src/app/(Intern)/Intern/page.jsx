@@ -87,7 +87,7 @@ export default function InternProfile() {
                             <InfoField label="College / Institution" value={finalUser?.college || "Not Specified"} />
                             <InfoField 
                                 label="Department" 
-                                value={finalUser?.department_name || finalUser?.department?.name || `Dept ID: ${finalUser?.deptartment_id || 'N/A'}`} 
+                                value={finalUser?.department_name || finalUser?.department?.name || `Dept ID: ${finalUser?.department_id || 'N/A'}`} 
                             />
                         </div>                       
                     </div>

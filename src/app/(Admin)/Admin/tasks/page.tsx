@@ -145,7 +145,7 @@ export default function AdminTasksPage() {
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="text-slate-500">Due Date</span>
-                                    <span className="font-mono text-indigo-400">{task.due_date || "No Date"}</span>
+                                    <span className="font-mono text-indigo-400">{task.due_date.split("T")[0] || "No Date"}</span>
                                 </div>
                                 <div className="mt-4 pt-2">
                                     <span className={`inline-block w-full text-center py-1.5 rounded-lg text-xs font-bold uppercase tracking-tighter ${getStatusStyle(task.status)}`}>

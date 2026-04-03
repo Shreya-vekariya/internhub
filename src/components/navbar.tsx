@@ -33,6 +33,7 @@ const NavItems: NavLink[] = [
     { label: "Intern List", href: "/Directory", roles: ["Intern"] },
     { label: "Dashboard", href: "/Admin", roles: ["Admin"] },
     { label: "All Tasks", href: "/Admin/tasks", roles: ["Admin"] },
+    { label: "AI", href: "/Aimodule", roles: ["Admin"] },
     { label: "Home", href: "/Head", roles: ["Head"] },
     { label: "Manage Tasks", href: "/Head/tasks", roles: ["Head"] },
     { label: "About", href: "/About" },

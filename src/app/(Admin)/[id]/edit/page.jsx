@@ -16,7 +16,7 @@ export default function EditUser() {
         role: "",
         college: "",
         gender: "",
-        deptartment_id: ""
+        department_id: ""
     });
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function EditUser() {
                         college: user.college || "",
                         gender: user.gender || "",
                         // Ensure ID is a string so it matches the <select> value correctly
-                        deptartment_id: user.deptartment_id ? String(user.deptartment_id) : ""
+                        department_id: user.department_id ? String(user.department_id) : ""
                     });
                 }
                 setDepartments(depts);
@@ -49,6 +49,7 @@ export default function EditUser() {
         loadData();
     }, [id]);
 
+    // In your EditUser component's handleSubmit:
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -58,12 +59,13 @@ export default function EditUser() {
                 role: formData.role,
                 college: formData.role === "Head" ? null : formData.college,
                 gender: formData.gender,
-                deptartment_id: parseInt(formData.deptartment_id)
+                department_id: parseInt(formData.department_id)
             });
             alert("User updated successfully!");
             router.push("/Admin/intern");
         } catch (error) {
-            alert("Update failed: " + error.message);
+            // This will now catch the "Department already has a Head" error
+            alert(error.message); 
         }
     };
 
@@ -115,8 +117,8 @@ export default function EditUser() {
                             <label className="block text-sm font-medium text-gray-400 mb-2">Department</label>
                             <select
                                 className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                                value={formData.deptartment_id}
-                                onChange={(e) => setFormData({...formData, deptartment_id: e.target.value})}
+                                value={formData.department_id}
+                                onChange={(e) => setFormData({...formData, department_id: e.target.value})}
                             >
                                 <option value="">Select Department</option>
                                 {departments.map((dept) => (

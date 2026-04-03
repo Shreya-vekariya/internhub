@@ -2,19 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-// Import the functions from your lib
 import { getDeptInterns, createTask } from '../../../../lib/useAdmin'; 
 
 export default function CreateTaskPage() {
     const router = useRouter();
     const { user } = useSelector((state) => state.auth);
 
-    console.log("DEBUG: Component Rendered");
-    console.log("DEBUG: User Object:", user);
-    console.log("DEBUG: Dept ID Value:", user?.deptartment_id);
+    const today = new Date().toISOString().split('T')[0];
     
     const [interns, setInterns] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    // Track errors for each specific field
+    const [errors, setErrors] = useState({}); 
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -23,7 +24,6 @@ export default function CreateTaskPage() {
         due_date: ''
     });
 
-    // 1. Fetch interns using the new utility function
     useEffect(() => {
         const fetchInterns = async () => {
             try {
@@ -33,36 +33,65 @@ export default function CreateTaskPage() {
                 console.error("Fetch Error:", error);
             }
         };
-
-        if (user?.dept_id) {
-            fetchInterns();
-        }
+        if (user?.dept_id) fetchInterns();
     }, [user]);
 
-    
+    const validate = () => {
+        let newErrors = {};
+        
+        // 1. Title Validation (No special characters, letters/numbers only)
+        const titleRegex = /^[a-zA-Z0-9 ]+$/;
+        if (!formData.title.trim()) {
+            newErrors.title = "Title is required";
+        } else if (!titleRegex.test(formData.title)) {
+            newErrors.title = "Special characters are not allowed in title";
+        }
 
-    // 2. Handle Form Submission using the utility function
+        // 2. Assigned To Validation
+        if (!formData.assigned_to) {
+            newErrors.assigned_to = "Please select an intern";
+        }
+
+        // 3. Due Date Validation (Past dates + Extreme future dates)
+        const selectedYear = new Date(formData.due_date).getFullYear();
+        if (!formData.due_date) {
+            newErrors.due_date = "Due date is required";
+        } else if (formData.due_date < today) {
+            newErrors.due_date = "Date cannot be in the past";
+        } else if (selectedYear > 2099) {
+            newErrors.due_date = "Please enter a valid year (before 2100)";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
+        
+        if (!validate()) return; // Stop if validation fails
 
-    try {
-        const taskObject = {
-            title: formData.title,
-            description: formData.description,
-            priority: formData.priority,
-            due_date: formData.due_date,
-            assigned_to: parseInt(formData.assigned_to),
-            department_id: user.dept_id, // This is all you need!
-            status: "Pending"
-        };
+        try {
+            setLoading(true);
+            const taskObject = {
+                title: formData.title,
+                description: formData.description,
+                priority: formData.priority,
+                due_date: formData.due_date,
+                assigned_to: parseInt(formData.assigned_to),
+                department_id: user.dept_id,
+                status: "Pending"
+            };
 
-        await createTask(taskObject);
-        alert("Task created successfully!");
-        router.push('/Head/tasks');
-    } catch (error) {
-        alert("Error: " + error.message);
-    }
-};
+            await createTask(taskObject);
+            alert("Task created successfully!");
+            router.push('/Head/tasks');
+        } catch (error) {
+            alert("Error: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="p-8 bg-[#0f172a] min-h-screen text-white">
@@ -81,18 +110,19 @@ export default function CreateTaskPage() {
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Task Title</label>
                             <input 
-                                className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all ${errors.title ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
                                 placeholder="e.g. Monthly Data Cleanup"
+                                value={formData.title}
                                 onChange={(e) => setFormData({...formData, title: e.target.value})}
-                                required
                             />
+                            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Description</label>
                             <textarea 
                                 className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all h-24"
-                                placeholder="Describe the task details..."
+                                placeholder="Describe the task details (Optional)..."
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                             />
                         </div>
@@ -101,17 +131,15 @@ export default function CreateTaskPage() {
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Assign To Intern</label>
                                 <select 
-                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white"
+                                    className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all text-white ${errors.assigned_to ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
                                     onChange={(e) => setFormData({...formData, assigned_to: e.target.value})}
-                                    required
                                 >
                                     <option value="">Select an Intern</option>
                                     {interns.map(i => (
-                                        <option key={i.id} value={i.id} className="bg-[#0f172a]">
-                                            {i.name}
-                                        </option>
+                                        <option key={i.id} value={i.id} className="bg-[#0f172a]">{i.name}</option>
                                     ))}
                                 </select>
+                                {errors.assigned_to && <p className="text-red-500 text-xs mt-1">{errors.assigned_to}</p>}
                             </div>
 
                             <div>
@@ -133,10 +161,12 @@ export default function CreateTaskPage() {
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Due Date</label>
                                 <input 
                                     type="date"
-                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    min={today}
+                                    max="2099-12-31" // Extra safeguard in UI
+                                    className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all ${errors.due_date ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
                                     onChange={(e) => setFormData({...formData, due_date: e.target.value})}
-                                    required
                                 />
+                                {errors.due_date && <p className="text-red-500 text-xs mt-1">{errors.due_date}</p>}
                             </div>
 
                             <div>
@@ -154,7 +184,7 @@ export default function CreateTaskPage() {
                             disabled={loading}
                             className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg ${
                                 loading 
-                                ? "bg-slate-700 cursor-not-allowed" 
+                                ? "bg-slate-700 cursor-not-allowed opacity-70" 
                                 : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98]"
                             }`}
                         >
@@ -165,4 +195,4 @@ export default function CreateTaskPage() {
             </div>
         </div>
     );
-}   
+}

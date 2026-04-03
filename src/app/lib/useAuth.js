@@ -27,7 +27,7 @@ export async function UserList() {
                 name
                 email
                 role
-                deptartment_id
+                department_id
             }
         }
     `;

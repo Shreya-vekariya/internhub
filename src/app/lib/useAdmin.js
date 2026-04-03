@@ -28,7 +28,7 @@ export const userlist = async () => {
                 email
                 role
                 college
-                deptartment_id
+                department_id
             }
             departments {
                 id
@@ -40,7 +40,7 @@ export const userlist = async () => {
     
     // Manual Join: Attach department_name to each user 
     return data.users.map(user => {
-        const dept = data.departments.find(d => d.id === user.deptartment_id);
+        const dept = data.departments.find(d => d.id === user.department_id);
         return {
             ...user,
             department_name: dept ? dept.name : "Not Assigned"
@@ -62,7 +62,7 @@ export const getSingleUser = async (id) => {
                 role
                 college
                 gender
-                deptartment_id
+                department_id
             }
             departments {
                 id
@@ -75,7 +75,7 @@ export const getSingleUser = async (id) => {
     const user = data.users_by_pk;
     
     // Manually find the matching department name
-    const dept = data.departments.find(d => d.id === user.deptartment_id);
+    const dept = data.departments.find(d => d.id === user.department_id);
     
     return {
         ...user,
@@ -123,70 +123,64 @@ export const getDepartments = async () => {
 };
 
 export const updateUser = async (id, updates) => {
-	const isHead = updates.role === "Head";
+    const isHead = updates.role === "Head";
+    const userId = parseInt(id);
 
-	const query = isHead
-		? `
-        mutation UpdateUser(
-            $id: Int!,
-            $set: users_set_input!,
-            $dept_id: Int!
-        ) {
-            # 1. Update user
-            updateUser: update_users_by_pk(
-                pk_columns: { id: $id },
-                _set: $set
-            ) {
+    if (isHead) {
+        // 1. Check if the department already has a head (excluding this user)
+        const checkQuery = `
+            query CheckDeptHead($dept_id: Int!) {
+                departments_by_pk(id: $dept_id) {
+                    name
+                    head_id
+                }
+            }
+        `;
+        
+        const checkRes = await hasuraRequest(checkQuery, { 
+            dept_id: parseInt(updates.department_id) 
+        });
+
+        const currentHeadId = checkRes?.departments_by_pk?.head_id;
+        const deptName = checkRes?.departments_by_pk?.name;
+
+        // If someone else is already the head, block the update
+        if (currentHeadId && currentHeadId !== userId) {
+            throw new Error(`The ${deptName} department already has a Head. Please demote the current Head before assigning a new one.`);
+        }
+
+        // 2. Proceed with the "Promote to Head" mutation
+        const query = `
+        mutation UpdateToHead($id: Int!, $set: users_set_input!, $dept_id: Int!) {
+            updateUser: update_users_by_pk(pk_columns: { id: $id }, _set: $set) {
                 id
                 role
-                deptartment_id
             }
-
-            # 2. Remove user as head from ANY previous department
-            clearOldHead: update_departments(
-                where: { head_id: { _eq: $id } }
-                _set: { head_id: null }
-            ) {
+            clearOldHead: update_departments(where: { head_id: { _eq: $id } }, _set: { head_id: null }) {
                 affected_rows
             }
-
-            # 3. Assign user as head to new department
-            setNewHead: update_departments_by_pk(
-                pk_columns: { id: $dept_id }
-                _set: { head_id: $id }
-            ) {
+            setNewHead: update_departments_by_pk(pk_columns: { id: $dept_id }, _set: { head_id: $id }) {
                 id
-                head_id
             }
+        }`;
+        return await hasuraRequest(query, { id: userId, set: updates, dept_id: updates.department_id });
+    }
+
+    // 3. Logic for Intern/Admin (Clears head_id if they were a head)
+    const query = `
+    mutation UpdateToNonHead($id: Int!, $set: users_set_input!) {
+        update_users_by_pk(pk_columns: { id: $id }, _set: $set) {
+            id
+            role
         }
-        `
-		: `
-        mutation UpdateUser(
-            $id: Int!,
-            $set: users_set_input!
+        clearHeadStatus: update_departments(
+            where: { head_id: { _eq: $id } }
+            _set: { head_id: null }
         ) {
-            update_users_by_pk(
-                pk_columns: { id: $id },
-                _set: $set
-            ) {
-                id
-                role
-            }
+            affected_rows
         }
-        `;
-
-	const variables = isHead
-		? {
-				id: parseInt(id),
-				set: updates,
-				dept_id: updates.deptartment_id,
-			}
-		: {
-				id: parseInt(id),
-				set: updates,
-			};
-
-	return await hasuraRequest(query, variables);
+    }`;
+    return await hasuraRequest(query, { id: userId, set: updates });
 };
 
 
@@ -228,7 +222,7 @@ export const getDeptInterns = async (deptId) => {
         query GetDeptInterns($deptId: Int!) {
             users(where: { 
                 role: { _eq: "Intern" }, 
-                deptartment_id: { _eq: $deptId }
+                department_id: { _eq: $deptId }
             }) {
                 id
                 name
@@ -412,3 +406,17 @@ export const getUpdateDepartments = async () => {
 	return json.data.departments;
 };
 
+export const getDeptName = async (deptId) => {
+    const query = `
+        query GetDeptName($deptId: Int!) {
+            departments(where: {
+                id: { _eq: $deptId }
+            }) {
+                id
+                name
+            }
+        }
+    `;
+    const data = await hasuraRequest(query, { deptId });
+    return data.departments;
+};

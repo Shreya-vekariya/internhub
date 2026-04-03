@@ -14,7 +14,7 @@ export async function GET(req) {
     const query = `
         query GetDeptInternsAndTasks($deptId: Int!) {
             users(where: { 
-                deptartment_id: { _eq: $deptId }, 
+                department_id: { _eq: $deptId }, 
                 role: { _eq: "Intern" } 
             }) {
                 id

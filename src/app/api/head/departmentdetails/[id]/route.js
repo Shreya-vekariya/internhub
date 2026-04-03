@@ -12,13 +12,13 @@ export async function GET(request, { params }) {
                 id
                 name
             }
-            users(where: {deptartment_id: {_eq: 2}}, order_by: {role: asc}) {
+            users(where: {department_id: {_eq: 2}}, order_by: {role: asc}) {
                 id
                 name
                 role
                 gender
                 email
-                deptartment_id
+                department_id
             }
         }
     `;

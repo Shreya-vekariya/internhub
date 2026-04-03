@@ -78,13 +78,13 @@ export default function DepartmentDashboard() {
 			) : (
 				/* Department Grid */
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{filteredDepartments.map((dept) => (
+					{filteredDepartments.map((dept, index) => (
 						<div
 							key={dept.id}
 							className="group relative bg-slate-900 border border-slate-800 p-6 rounded-3xl hover:border-indigo-500/50 transition-all duration-300 shadow-xl flex flex-col justify-between">
 							{/* Decorative Background ID */}
 							<div className="absolute top-6 right-6 text-slate-800 group-hover:text-indigo-500/20 text-5xl font-black transition-colors pointer-events-none">
-								{dept.id < 10 ? `0${dept.id}` : dept.id}
+								{/* {dept.id < 10 ? `0${dept.id}` : dept.id} */}{index+1}
 							</div>
 
 							<div className="relative z-10">

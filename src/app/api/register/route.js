@@ -37,7 +37,7 @@ export async function POST(req) {
                     role: $role, 
                     college: $college,
                     gender: $gender,
-                    deptartment_id: $dept_id
+                    department_id: $dept_id
                 }) {
                     id
                     email
@@ -59,7 +59,7 @@ export async function POST(req) {
 		const userMutation = `
             mutation InsertUser($name: String!, $email: String!, $password: String!, $role: String!, $college: String, $gender: String, $dept_id: Int) {
                 insert_users_one(object: {
-                    name: $name, email: $email, password: $password, role: $role, college: $college, gender: $gender, deptartment_id: $dept_id
+                    name: $name, email: $email, password: $password, role: $role, college: $college, gender: $gender, department_id: $dept_id
                 }) { id }
             }
         `;

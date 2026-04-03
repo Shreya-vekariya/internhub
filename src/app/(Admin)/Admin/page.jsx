@@ -126,7 +126,7 @@ export default function Admin() {
                     <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-3xl p-6">
                         <h3 className="text-lg font-bold mb-4 text-indigo-300">Quick Shortcuts</h3>
                         <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => router.push('/Admin/intern')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Manage Interns</button>
+                            <button onClick={() => router.push('/Admin/intern')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Manage Users</button>
                             <button onClick={() => router.push('/Admin/department')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Manage Depts</button>
                             <button onClick={() => router.push('/AddUser')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Add Staff</button>
                             <button className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors opacity-50 cursor-not-allowed">Settings</button>

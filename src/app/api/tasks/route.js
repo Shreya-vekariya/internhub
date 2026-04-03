@@ -20,7 +20,7 @@ const GET_TASKS_QUERY = `
 
 const GET_DEPT_INTERNS = `
   query GetDeptInterns($deptId: Int!) {
-    users(where: { role: { _eq: "Intern" }, deptartment_id: { _eq: $deptId } }) {
+    users(where: { role: { _eq: "Intern" }, department_id: { _eq: $deptId } }) {
       id
       name
     }

@@ -22,7 +22,7 @@ export const authOptions = {
                             email
                             password
                             role
-							deptartment_id
+							department_id
                         }
                     }
                 `;
@@ -49,7 +49,7 @@ export const authOptions = {
                     name: user.name,
                     email: user.email,
                     role: user.role,
-					deptId: user.deptartment_id,
+					deptId: user.department_id,
                 };
             },
         }),

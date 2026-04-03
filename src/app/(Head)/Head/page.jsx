@@ -3,42 +3,87 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
+import { getDeptName } from "../../lib/useAdmin";
 
 function DashboardContent() {
     const searchParams = useSearchParams();
     const externalSearch = searchParams.get('search');
 
     const { user } = useSelector((state) => state.auth);
-    const [interns, setInterns] = useState([]);
+    const [interns, setInterns] = useState([]); // Initialized as empty array
     const [searchTerm, setSearchTerm] = useState("");
     const [genderFilter, setGenderFilter] = useState("All");
+    const [loading, setLoading] = useState(true); // Added loading state
 
     const router = useRouter();
+    const [departmentName, setDepartmentName] = useState("");
 
-    // Initialize searchTerm from URL on mount
+    // 1. Fetch Department Name
+    useEffect(() => {
+        const dname = async () => {
+            const deptId = user?.dept_id || user?.department_id;
+            if (!deptId) return;
+            
+            try {
+                const data = await getDeptName(deptId);
+                if (data && data.length > 0) {
+                    setDepartmentName(data[0].name);
+                }
+            } catch (error) {
+                console.error("Failed to fetch department name:", error);
+            }
+        };
+        dname();
+    }, [user?.dept_id, user?.department_id]);
+
+    // 2. Initialize searchTerm from URL
     useEffect(() => {
         if (externalSearch) {
             setSearchTerm(externalSearch);
         }
     }, [externalSearch]);
 
-    // Fetch Interns Data
+    // 3. Fetch Interns Data with Error Handling
     useEffect(() => {
-        const deptId = user?.dept_id || user?.deptartment_id;
-        if (deptId) {
-            fetch(`/api/head/interns?deptId=${deptId}`)
-                .then(res => res.json())
-                .then(data => setInterns(data));
-        }
+        const fetchInterns = async () => {
+            const deptId = user?.dept_id || user?.department_id;
+            if (!deptId) return;
+
+            setLoading(true);
+            try {
+                const res = await fetch(`/api/head/interns?deptId=${deptId}`);
+                const data = await res.json();
+                
+                // CRITICAL FIX: Ensure data is actually an array before setting state
+                if (Array.isArray(data)) {
+                    setInterns(data);
+                } else {
+                    console.error("API returned non-array data:", data);
+                    setInterns([]);
+                }
+            } catch (error) {
+                console.error("Fetch Interns Error:", error);
+                setInterns([]); // Fallback to empty array on error
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInterns();
     }, [user]);
 
-    const filteredInterns = interns.filter((intern) => {
+    // 4. Filter Logic with "Guard" (Checks if interns is an array)
+    const filteredInterns = Array.isArray(interns) ? interns.filter((intern) => {
         const matchesSearch = 
             (intern.name || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
             (intern.college || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchesGender = genderFilter === "All" || intern.gender === genderFilter;
         return matchesSearch && matchesGender;
-    });
+    }) : [];
+
+    if (loading && interns.length === 0) {
+        return <div className="p-8 text-white text-center">Loading Interns...</div>;
+    }
 
     return (
         <div className="p-8 bg-[#0f172a] min-h-screen text-slate-200">
@@ -48,7 +93,7 @@ function DashboardContent() {
                 <div className="mb-8 border-l-4 border-indigo-500 pl-4 flex justify-between items-end">
                     <div>
                         <h1 className="text-3xl font-extrabold text-white tracking-tight">
-                            Department <span className="text-indigo-400">Interns</span>
+                            {departmentName || "Department"} <span className="text-indigo-400">Interns</span>
                         </h1>
                         <p className="text-slate-400 mt-1">Real-time management for your assigned personnel.</p>
                     </div>
@@ -150,7 +195,9 @@ function DashboardContent() {
                             ) : (
                                 <tr>
                                     <td colSpan="5" className="px-6 py-20 text-center">
-                                        <div className="text-slate-500 text-lg">No matches found for "<span className="text-indigo-400">{searchTerm}</span>"</div>
+                                        <div className="text-slate-500 text-lg">
+                                            {searchTerm ? `No matches found for "${searchTerm}"` : "No interns available."}
+                                        </div>
                                     </td>
                                 </tr>
                             )}

@@ -101,6 +101,7 @@ function TasksContent() { // Wrapped existing logic into a sub-component
                         <tr>
                             <th className="px-6 py-4">Task Details</th>
                             <th className="px-6 py-4">Assigned To</th>
+                            <th className="px-6 py-4">Due Date</th>
                             <th className="px-6 py-4">Priority</th>
                             <th className="px-6 py-4">Status</th>
                             <th className="px-6 py-4 text-center">Actions</th>
@@ -129,6 +130,11 @@ function TasksContent() { // Wrapped existing logic into a sub-component
                                                 {task.user?.name?.charAt(0) || '?'}
                                             </div>
                                             <span className="text-sm text-slate-300">{task.user?.name || "Unassigned"}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm text-slate-300">{task.due_date || "No due date"}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
