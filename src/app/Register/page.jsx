@@ -14,6 +14,7 @@ export default function Register() {
 		name: Yup.string()
 			.min(2, "Name is too short")
 			.max(50, "Name is too long")
+			.matches(/^[a-zA-Z\s]+$/, "Name should only contain letters and spaces")
 			.required("Full name is required"),
 		email: Yup.string()
 			.email("Invalid email address")
@@ -21,7 +22,8 @@ export default function Register() {
 		password: Yup.string()
 			.min(8, "Password must be at least 8 characters")
 			.matches(/[A-Z]/, "Must contain one uppercase letter")
-			// .matches(/[0-9]/, "Must contain one number")
+			.matches(/[0-9]/, "Must contain at least one digit")
+        	.matches(/[@$!%*?&#]/, "Must contain at least one special character (@$!%*?&#)")
 			.required("Password is required"),
 	});
 

@@ -177,7 +177,7 @@ const AskAi = () => {
                 )} */}
  
                 {/* Chart Section */}
-                <div
+                {/* <div
                     className={`${showResults && results.length >= 2 ? "block" : "hidden"} bg-slate-800/70 backdrop-blur-xl rounded-3xl border border-white/10 p-8 shadow-xl animate-in fade-in zoom-in-95 duration-500`}>
                     <div className="font-mono text-xs uppercase mb-6 text-slate-400">
                         Data Visualization
@@ -185,7 +185,7 @@ const AskAi = () => {
                     <div className="h-100">
                         <canvas ref={chartRef}></canvas>
                     </div>
-                </div>
+                </div> */}
  
                 {/* Results Table */}
                 {showResults && (
