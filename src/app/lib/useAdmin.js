@@ -1,5 +1,9 @@
+"use server";
 const HASURA_URL = process.env.NEXT_PUBLIC_HASURA_PROJECT_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET;
+
+import { hash, compare } from "bcryptjs";
+import { sendMail } from "./mail";
 
 // Helper for Hasura Requests
 async function hasuraRequest(query, variables = {}) {
@@ -21,20 +25,23 @@ async function hasuraRequest(query, variables = {}) {
 
 export const userlist = async () => {
     const query = `
-        query GetUsersAndDepts {
-            users {
-                id
-                name
-                email
-                role
-                college
-                department_id
-            }
-            departments {
-                id
-                name
-            }
-        }
+       query GetUsersAndDepts {
+  users {
+    id
+    name
+    email
+    role
+    college
+    department_id
+    end_date
+    start_date
+    status
+  }
+  departments {
+    id
+    name
+  }
+}
     `;
     const data = await hasuraRequest(query);
     
@@ -63,6 +70,9 @@ export const getSingleUser = async (id) => {
                 college
                 gender
                 department_id
+                start_date   
+                end_date     
+                status
             }
             departments {
                 id
@@ -420,3 +430,181 @@ export const getDeptName = async (deptId) => {
     const data = await hasuraRequest(query, { deptId });
     return data.departments;
 };
+
+export async function updatePasswordByEmail(email) {
+    try {
+        // 1. Check if the user exists in the database
+        // Replace 'YOUR_GRAPHQL_ENDPOINT' and 'YOUR_ADMIN_SECRET' with your actual environment variables
+        const checkUserResponse = await fetch(process.env.NEXT_PUBLIC_HASURA_PROJECT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            },
+            body: JSON.stringify({
+                query: `
+                    query CheckUser($email: String!) {
+                        users(where: {email: {_eq: $email}}) {
+                            id
+                            email
+                        }
+                    }
+                `,
+                variables: { email },
+            }),
+        });
+
+        const checkUserData = await checkUserResponse.json();
+        const userExists = checkUserData.data?.users?.length > 0;
+
+        // 2. If email is not registered, return a specific error message
+        if (!userExists) {
+            return { 
+                success: false, 
+                message: "This email address is not registered in our system." 
+            };
+        }
+
+        // 3. Email exists -> Generate random password
+        const newPlainPassword = Math.random().toString(36).slice(-10); // 10 chars
+        const hashedPassword = await hash(newPlainPassword, 10);
+
+        // 4. Update the password in the database
+        const updateResponse = await fetch(process.env.NEXT_PUBLIC_HASURA_PROJECT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation UpdateUserPassword($email: String!, $password: String!) {
+                        update_users(where: {email: {_eq: $email}}, _set: {password: $password}) {
+                            affected_rows
+                        }
+                    }
+                `,
+                variables: { email, password: hashedPassword },
+            }),
+        });
+
+        const updateData = await updateResponse.json();
+
+        if (updateData.errors || updateData.data?.update_users?.affected_rows === 0) {
+            throw new Error("Failed to update password in database.");
+        }
+
+        // 5. Send the email with the PLAIN text password
+        await sendMail({
+            sendTo: email,
+            subject: "Your New Access Password",
+            text: `Your password has been reset. Your new temporary password is: ${newPlainPassword}\n\nPlease log in and change this password immediately from your profile.`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                    <h2>Password Reset Successful</h2>
+                    <p>You requested a password reset. Use the temporary password below to log in:</p>
+                    <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; font-size: 20px; font-weight: bold; text-align: center; color: #4f46e5;">
+                        ${newPlainPassword}
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Security Tip:</strong> Please change this password as soon as you log in.</p>
+                </div>
+            `
+        });
+
+        return { 
+            success: true, 
+            message: "A new password has been sent to your registered email address." 
+        };
+
+    } catch (error) {
+        console.error("Forgot Password Error:", error);
+        return { 
+            success: false, 
+            message: "An unexpected error occurred. Please try again later." 
+        };
+    }
+}
+
+/**
+ * 2. CHANGE PASSWORD: Validates current password and updates to new one
+ * Used by the InternProfile modal.
+ */
+export async function updateProfilePassword(userId, currentPlain, newPlain) {
+    try {
+        // 1. Fetch the user's current hashed password from Hasura
+        const fetchUserResponse = await fetch(process.env.NEXT_PUBLIC_HASURA_PROJECT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            },
+            body: JSON.stringify({
+                query: `
+                    query GetUserPassword($id: Int!) {
+                        users_by_pk(id: $id) {
+                            password
+                        }
+                    }
+                `,
+                variables: { id: userId },
+            }),
+        });
+
+        const userData = await fetchUserResponse.json();
+        const currentHash = userData.data?.users_by_pk?.password;
+
+        if (!currentHash) {
+            throw new Error("User record not found.");
+        }
+
+        // 2. Verify if the 'Current Password' entered matches the hash in DB
+        const isMatch = await compare(currentPlain, currentHash);
+        if (!isMatch) {
+            // Throwing a specific error message for the frontend to catch
+            throw new Error("The current password you entered is incorrect.");
+        }
+
+        // 3. Hash the 'New Password'
+        const hashedNewPassword = await hash(newPlain, 10);
+
+        // 4. Update the user record in Hasura
+        const updateResponse = await fetch(process.env.NEXT_PUBLIC_HASURA_PROJECT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation UpdateUserPassword($id: Int!, $password: String!) { 
+                        update_users_by_pk(
+                            pk_columns: {id: $id}, 
+                            _set: {password: $password}
+                        ) {
+                            id
+                        }
+                    }
+                `,
+                variables: { 
+                    id: userId, 
+                    password: hashedNewPassword 
+                },
+            }),
+        });
+
+        const updateResult = await updateResponse.json();
+        console.log(updateResult , "Update Result ===============================");
+
+        if (updateResult.errors) {
+            console.log(updateResult.errors , "Backend=============================================")
+            // throw new Error("Failed to update password in database.");
+        }
+
+        return { success: true, message: "Password updated successfully!" };
+
+    } catch (error) {
+        console.error("Database Error (updateProfilePassword):", error);
+        // We re-throw the error so your frontend 'catch' block can use error.message
+        throw error;
+    }
+}

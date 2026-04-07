@@ -16,6 +16,7 @@ const IdDept = () => {
 				if (!response.ok) throw new Error(`Error: ${response.status}`);
 				const result = await response.json();
 				setData(result);
+				console.log("Result:",result);
 			} catch (error) {
 				console.error("Fetch error:", error.message);
 			} finally {

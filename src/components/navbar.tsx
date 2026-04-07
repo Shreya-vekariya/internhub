@@ -29,13 +29,10 @@ interface RootState {
 
 const NavItems: NavLink[] = [
     { label: "Profile", href: "/Intern", roles: ["Intern"] },
-    { label: "My Tasks", href: "/Intern/tasks", roles: ["Intern"] },
     { label: "Intern List", href: "/Directory", roles: ["Intern"] },
     { label: "Dashboard", href: "/Admin", roles: ["Admin"] },
-    { label: "All Tasks", href: "/Admin/tasks", roles: ["Admin"] },
     { label: "AI", href: "/Aimodule", roles: ["Admin"] },
     { label: "Home", href: "/Head", roles: ["Head"] },
-    { label: "Manage Tasks", href: "/Head/tasks", roles: ["Head"] },
     { label: "About", href: "/About" },
 ];
 
@@ -59,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, links = NavItems }) => {
                 <div className="flex items-center gap-8">
                     <Link href="/" className="group flex items-center gap-2">
                         <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.5)] group-hover:rotate-12 transition-transform">
-                            <span className="text-white font-black">P</span>
+                            <span className="text-white font-black">IH</span>
                         </div>
                         <h1 className="text-xl font-extrabold text-white tracking-tight uppercase">
                             {title}

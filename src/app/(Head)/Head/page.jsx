@@ -141,7 +141,7 @@ function DashboardContent() {
                                 <th className="px-6 py-5 font-semibold">College</th>
                                 <th className="px-6 py-5 font-semibold text-center">Gender</th>
                                 <th className="px-6 py-5 font-semibold text-center">Action</th>
-                                <th className="px-6 py-5 font-semibold text-center">Tasks Count</th>
+                                {/* <th className="px-6 py-5 font-semibold text-center">Tasks Count</th> */}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800">
@@ -177,19 +177,19 @@ function DashboardContent() {
                                                 >
                                                     View
                                                 </button>
-                                                <button 
+                                                {/* <button 
                                                     onClick={() => router.push(`/Head/tasks?search=${encodeURIComponent(intern.name)}`)} 
                                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[100px]"
                                                 >
                                                     Edit Task
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-5 text-center">
+                                        {/* <td className="px-6 py-5 text-center">
                                             <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-sm">
                                                 {intern.task_count || 0}
                                             </div>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))
                             ) : (

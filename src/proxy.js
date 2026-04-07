@@ -33,7 +33,6 @@
 
 // middleware.js
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 import { getToken } from "next-auth/jwt";
 
 export async function proxy(req) {
@@ -41,7 +40,7 @@ export async function proxy(req) {
 	const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 	const { pathname } = url;
 
-	const publicPaths = ["/Login", "/Register", "/api/auth"];
+	const publicPaths = ["/Login", "/Register", "/api/auth", "/ForgotPassword"];
 	const isPublic = publicPaths.some((path) => pathname.startsWith(path));
 
 	if (!token && !isPublic) {

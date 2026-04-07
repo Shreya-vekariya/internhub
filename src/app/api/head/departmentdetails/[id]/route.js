@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
                 id
                 name
             }
-            users(where: {department_id: {_eq: 2}}, order_by: {role: asc}) {
+            users(where: {department_id: {_eq: $id}}, order_by: {role: asc}) {
                 id
                 name
                 role

@@ -96,7 +96,7 @@ export default function Admin() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* 1. Recent Activity / Latest Signups */}
-                <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-3xl p-6">
+                <div className="lg:col-span-3 bg-slate-900/50 border border-slate-800 rounded-3xl p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold">Recent Signups</h3>
                         <Link href="/Admin/users" className="text-indigo-400 text-sm hover:underline">View all</Link>
@@ -122,7 +122,7 @@ export default function Admin() {
                 </div>
 
                 {/* 2. Quick Actions / System Status */}
-                <div className="space-y-6">
+                {/* <div className="space-y-6">
                     <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-3xl p-6">
                         <h3 className="text-lg font-bold mb-4 text-indigo-300">Quick Shortcuts</h3>
                         <div className="grid grid-cols-2 gap-3">
@@ -152,7 +152,7 @@ export default function Admin() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </div>

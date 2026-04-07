@@ -57,6 +57,15 @@ const AskAi = () => {
                 renderChart(columns, results);
             }
         }, [results, columns, showResults]);
+
+        // Cleanup chart on unmount
+        useEffect(() => {
+            return () => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+            };
+        }, []);
  
         const renderChart = (cols, rows) => {
             const numericCols = cols.filter((col) => {
@@ -72,8 +81,8 @@ const AskAi = () => {
  
             if (numericCols.length === 0) return;
  
-            const ctx = chartRef.current.getContext("2d");
- 
+            if (!chartRef.current) return;
+
             if (chartInstance.current) {
                 chartInstance.current.destroy();
             }
@@ -183,7 +192,7 @@ const AskAi = () => {
                         Data Visualization
                     </div>
                     <div className="h-100">
-                        <canvas ref={chartRef}></canvas>
+                        <canvas ref={chartRef} width="400" height="200"></canvas>
                     </div>
                 </div> */}
  
