@@ -28,7 +28,7 @@ const IdDept = () => {
 
 	if (loading)
 		return (
-			<div className="p-10 text-white animate-pulse">
+			<div className="p-10 text-slate-900 animate-pulse">
 				Loading Department Details...
 			</div>
 		);
@@ -43,34 +43,34 @@ const IdDept = () => {
 	const femaleCount = users.filter((u) => u.gender === "FEMALE").length;
 
 	return (
-		<div className="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-12">
+		<div className="min-h-screen bg-slate-50 text-slate-900 p-6 md:p-12">
 			{/* Header / Breadcrumb */}
 			<button
 				onClick={() => router.back()}
-				className="flex items-center gap-2 text-slate-500 hover:text-indigo-400 transition-colors mb-6 text-sm font-medium">
+				className="flex items-center gap-2 text-slate-500 hover:text-teal-600 transition-colors mb-6 text-sm font-medium">
 				← Back to Dashboard
 			</button>
 
 			{/* Department Hero Section */}
-			<div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 mb-8 shadow-2xl relative overflow-hidden">
-				<div className="absolute top-0 right-0 p-8 text-slate-800 font-black text-7xl opacity-20 pointer-events-none">
+			<div className="bg-white border border-slate-200 rounded-3xl p-8 mb-8 shadow-sm relative overflow-hidden">
+				<div className="absolute top-0 right-0 p-8 text-slate-100 font-black text-7xl opacity-50 pointer-events-none">
 					{dept.id}
 				</div>
 
 				<div className="relative z-10">
-					<span className="bg-indigo-500/10 text-indigo-400 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20 uppercase tracking-widest">
+					<span className="bg-teal-50 text-teal-600 text-xs font-bold px-3 py-1 rounded-full border border-teal-200 uppercase tracking-widest">
 						Department
 					</span>
-					<h1 className="text-5xl font-extrabold text-white mt-4 mb-2 tracking-tight">
+					<h1 className="text-5xl font-extrabold text-slate-900 mt-4 mb-2 tracking-tight">
 						{dept.name}
 					</h1>
 					<div className="flex flex-wrap gap-6 mt-6">
 						<StatItem label="Total Staff" value={users.length} />
-						<StatItem label="Male" value={maleCount} color="text-blue-400" />
+						<StatItem label="Male" value={maleCount} color="text-blue-600" />
 						<StatItem
 							label="Female"
 							value={femaleCount}
-							color="text-pink-400"
+							color="text-pink-600"
 						/>
 					</div>
 				</div>
@@ -79,7 +79,7 @@ const IdDept = () => {
 			{/* Users List Section */}
 			<div className="space-y-4">
 				<div className="flex justify-between items-center px-2">
-					<h2 className="text-xl font-bold text-white">Team Members</h2>
+					<h2 className="text-xl font-bold text-slate-900">Team Members</h2>
 					<span className="text-sm text-slate-500">
 						{users.length} active profiles
 					</span>
@@ -89,19 +89,19 @@ const IdDept = () => {
 					{users.map((user) => (
 						<div
 							key={user.id}
-							className="bg-slate-900 border border-slate-800 hover:border-indigo-500/40 p-5 rounded-2xl transition-all group">
+							className="bg-white border border-slate-200 hover:border-teal-300 p-5 rounded-2xl transition-all shadow-sm flex flex-col justify-between group">
 							<div className="flex items-start justify-between">
 								<div className="flex items-center gap-4">
 									<div
-										className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+										className={`w-12 h-12 border rounded-full flex items-center justify-center text-lg font-bold ${
 											user.gender === "MALE"
-												? "bg-blue-500/10 text-blue-400"
-												: "bg-pink-500/10 text-pink-400"
+												? "bg-blue-50 text-blue-600 border-blue-200"
+												: "bg-pink-50 text-pink-600 border-pink-200"
 										}`}>
 										{user.name.charAt(0)}
 									</div>
 									<div>
-										<h3 className="font-bold text-white group-hover:text-indigo-300 transition-colors">
+										<h3 className="font-bold text-slate-900 group-hover:text-teal-600 transition-colors">
 											{user.name}
 										</h3>
 										<p className="text-xs text-slate-500">{user.email}</p>
@@ -111,8 +111,8 @@ const IdDept = () => {
 									<span
 										className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase ${
 											user.role === "Head"
-												? "border-amber-500/40 text-amber-500 bg-amber-500/5"
-												: "border-slate-700 text-slate-400"
+												? "border-amber-200 text-amber-600 bg-amber-50"
+												: "border-slate-200 text-slate-500 bg-slate-50"
 										}`}>
 										{user.role}
 									</span>
@@ -124,7 +124,7 @@ const IdDept = () => {
 									Gender:{" "}
 									<span
 										className={
-											user.gender === "MALE" ? "text-blue-400" : "text-pink-400"
+											user.gender === "MALE" ? "text-blue-600 bg-blue-50 px-1 rounded" : "text-pink-600 bg-pink-50 px-1 rounded"
 										}>
 										{user.gender}
 									</span>
@@ -140,8 +140,8 @@ const IdDept = () => {
 };
 
 
-const StatItem = ({ label, value, color = "text-indigo-400" }) => (
-	<div className="flex flex-col border-l-2 border-slate-800 pl-4">
+const StatItem = ({ label, value, color = "text-teal-600" }) => (
+	<div className="flex flex-col border-l-2 border-slate-200 pl-4">
 		<span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
 			{label}
 		</span>

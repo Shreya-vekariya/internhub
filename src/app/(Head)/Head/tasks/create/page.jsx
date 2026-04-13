@@ -94,23 +94,23 @@ export default function CreateTaskPage() {
     };
 
     return (
-        <div className="p-8 bg-[#0f172a] min-h-screen text-white">
+        <div className="p-8 bg-slate-50 min-h-screen text-slate-900">
             <div className="max-w-2xl mx-auto">
                 <button 
                     onClick={() => router.back()}
-                    className="text-slate-400 hover:text-white mb-4 flex items-center gap-2 transition-colors"
+                    className="text-slate-500 hover:text-teal-600 mb-4 flex items-center gap-2 transition-colors font-semibold"
                 >
                     ← Back to Tasks
                 </button>
                 
-                <h1 className="text-3xl font-bold mb-6 text-white">Assign New Task</h1>
+                <h1 className="text-3xl font-bold mb-6 text-slate-900">Assign New Task</h1>
                 
-                <div className="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl">
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Task Title</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Task Title</label>
                             <input 
-                                className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all ${errors.title ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
+                                className={`w-full bg-white border border-slate-300 p-3 rounded-lg text-slate-900 shadow-sm focus:ring-2 focus:border-teal-500 outline-none transition-all ${errors.title ? 'border-red-500 focus:ring-red-500' : 'focus:ring-teal-500'}`}
                                 placeholder="e.g. Monthly Data Cleanup"
                                 value={formData.title}
                                 onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -119,9 +119,9 @@ export default function CreateTaskPage() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Description</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
                             <textarea 
-                                className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all h-24"
+                                className="w-full bg-white border border-slate-300 p-3 rounded-lg text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all h-24"
                                 placeholder="Describe the task details (Optional)..."
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                             />
@@ -129,23 +129,23 @@ export default function CreateTaskPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Assign To Intern</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Assign To Intern</label>
                                 <select 
-                                    className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all text-white ${errors.assigned_to ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
+                                    className={`w-full bg-white border border-slate-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:border-teal-500 outline-none transition-all text-slate-900 ${errors.assigned_to ? 'border-red-500 focus:ring-red-500' : 'focus:ring-teal-500'}`}
                                     onChange={(e) => setFormData({...formData, assigned_to: e.target.value})}
                                 >
                                     <option value="">Select an Intern</option>
                                     {interns.map(i => (
-                                        <option key={i.id} value={i.id} className="bg-[#0f172a]">{i.name}</option>
+                                        <option key={i.id} value={i.id}>{i.name}</option>
                                     ))}
                                 </select>
                                 {errors.assigned_to && <p className="text-red-500 text-xs mt-1">{errors.assigned_to}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Priority Level</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Priority Level</label>
                                 <select 
-                                    className="w-full bg-[#0f172a] border border-slate-700 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full bg-white border border-slate-300 p-3 rounded-lg text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
                                     value={formData.priority}
                                     onChange={(e) => setFormData({...formData, priority: e.target.value})}
                                 >
@@ -158,23 +158,23 @@ export default function CreateTaskPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Due Date</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Due Date</label>
                                 <input 
                                     type="date"
                                     min={today}
                                     max="2099-12-31" // Extra safeguard in UI
-                                    className={`w-full bg-[#0f172a] border p-3 rounded-lg focus:ring-2 outline-none transition-all ${errors.due_date ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-blue-500'}`}
+                                    className={`w-full bg-white border border-slate-300 p-3 rounded-lg text-slate-900 shadow-sm focus:ring-2 focus:border-teal-500 outline-none transition-all ${errors.due_date ? 'border-red-500 focus:ring-red-500' : 'focus:ring-teal-500'}`}
                                     onChange={(e) => setFormData({...formData, due_date: e.target.value})}
                                 />
                                 {errors.due_date && <p className="text-red-500 text-xs mt-1">{errors.due_date}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Department (Auto)</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Department (Auto)</label>
                                 <input 
                                     value={user?.department_name || user?.department?.name || ""} 
                                     disabled 
-                                    className="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-slate-500 cursor-not-allowed italic"
+                                    className="w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-slate-500 cursor-not-allowed italic"
                                 />
                             </div>
                         </div>
@@ -182,10 +182,10 @@ export default function CreateTaskPage() {
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg ${
+                            className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-sm text-white ${
                                 loading 
-                                ? "bg-slate-700 cursor-not-allowed opacity-70" 
-                                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98]"
+                                ? "bg-slate-300 text-slate-600 cursor-not-allowed" 
+                                : "bg-teal-600 hover:bg-teal-700 active:scale-[0.98]"
                             }`}
                         >
                             {loading ? "Creating Task..." : "Confirm & Assign Task"}

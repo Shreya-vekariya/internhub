@@ -26,7 +26,7 @@ export default function Admin() {
     const recentUsers = [...users].sort((a, b) => b.id - a.id).slice(0, 3);
 
     return (
-        <div className="min-h-screen p-8 text-white bg-slate-950">
+        <div className="min-h-screen p-8 text-slate-900 bg-slate-50">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
                 <div>
@@ -36,20 +36,20 @@ export default function Admin() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <p className="text-slate-400 text-sm">System Operational • {new Date().toLocaleDateString()}</p>
+                        <p className="text-slate-500 text-sm">System Operational • {new Date().toLocaleDateString()}</p>
                     </div>
                 </div>
 
                 <div className="flex gap-3">
                     <button
                         onClick={() => router.push("/AddDepartment")}
-                        className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all"
+                        className="flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-300 px-5 py-2.5 rounded-xl text-sm font-medium text-slate-900 transition-all"
                     >
                         <span className="text-lg">+</span> Department
                     </button>
                     <button
                         onClick={() => router.push("/AddUser")}
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 rounded-xl text-sm font-medium shadow-lg shadow-indigo-500/20 transition-all"
+                        className="flex items-center gap-2 bg-teal-600 hover:bg-teal-500 px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm text-white transition-all"
                     >
                         <span className="text-lg">+</span> New User
                     </button>
@@ -57,10 +57,10 @@ export default function Admin() {
             </div>
 
             {/* Welcome Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900/40 via-slate-900 to-slate-900 border border-indigo-500/20 rounded-3xl p-8 mb-10">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+            <div className="relative overflow-hidden bg-gradient-to-br from-teal-50 via-white to-white border border-slate-200 rounded-3xl p-8 mb-10 shadow-sm">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                    <div className="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center text-3xl font-bold shadow-lg shadow-indigo-500/20">
+                    <div className="w-20 h-20 rounded-2xl bg-teal-600 flex items-center justify-center text-3xl font-bold shadow-lg shadow-teal-500/20">
                         {currentUser?.name?.charAt(0) || "A"}
                     </div>
                     <div className="flex-1 text-center md:text-left">
@@ -68,12 +68,12 @@ export default function Admin() {
                             <h1 className="text-3xl font-extrabold tracking-tight">
                                 Welcome back, {currentUser?.name || "Admin"}!
                             </h1>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 w-fit self-center">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-500/20  border border-teal-500/30 w-fit self-center">
                                 {currentUser?.role || "System Admin"}
                             </span>
                         </div>
-                        <p className="text-slate-400 max-w-xl">
-                            Logged in as <span className="text-slate-200 font-medium">{currentUser?.email}</span>. 
+                        <p className="text-slate-600 max-w-xl">
+                            Logged in as <span className="text-slate-900 font-medium">{currentUser?.email}</span>. 
                             Everything looks stable today.
                         </p>
                     </div>
@@ -96,16 +96,16 @@ export default function Admin() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* 1. Recent Activity / Latest Signups */}
-                <div className="lg:col-span-3 bg-slate-900/50 border border-slate-800 rounded-3xl p-6">
+                <div className="lg:col-span-3 bg-white border border-slate-200 shadow-sm rounded-3xl p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold">Recent Signups</h3>
-                        <Link href="/Admin/users" className="text-indigo-400 text-sm hover:underline">View all</Link>
+                        <Link href="/Admin/users" className="text-teal-600 text-sm hover:underline">View all</Link>
                     </div>
                     <div className="space-y-4">
                         {recentUsers.map((user) => (
-                            <div key={user.id} className="flex items-center justify-between p-4 bg-slate-800/40 rounded-2xl border border-slate-700/50">
+                            <div key={user.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs">
+                                    <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-xs text-slate-800">
                                         {user.name?.charAt(0)}
                                     </div>
                                     <div>
@@ -113,7 +113,7 @@ export default function Admin() {
                                         <p className="text-xs text-slate-500">{user.email}</p>
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-slate-700 text-slate-300">
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-slate-200 text-slate-700">
                                     {user.role}
                                 </span>
                             </div>
@@ -123,8 +123,8 @@ export default function Admin() {
 
                 {/* 2. Quick Actions / System Status */}
                 {/* <div className="space-y-6">
-                    <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-3xl p-6">
-                        <h3 className="text-lg font-bold mb-4 text-indigo-300">Quick Shortcuts</h3>
+                    <div className="bg-teal-600/10 border border-teal-500/20 rounded-3xl p-6">
+                        <h3 className="text-lg font-bold mb-4 text-teal-300">Quick Shortcuts</h3>
                         <div className="grid grid-cols-2 gap-3">
                             <button onClick={() => router.push('/Admin/users')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Manage Users</button>
                             <button onClick={() => router.push('/Admin/department')} className="p-3 bg-slate-800 rounded-xl text-xs font-medium hover:bg-slate-700 transition-colors">Manage Depts</button>
@@ -141,7 +141,7 @@ export default function Admin() {
                                 <span className="text-emerald-400 font-mono text-xs">Normal (12ms)</span>
                             </div>
                             <div className="w-full bg-slate-800 rounded-full h-1.5">
-                                <div className="bg-indigo-500 h-1.5 rounded-full w-[35%]"></div>
+                                <div className="bg-teal-500 h-1.5 rounded-full w-[35%]"></div>
                             </div>
                             <div className="flex justify-between items-center text-sm">
                                 <span className="text-slate-400">Storage Used</span>
@@ -162,18 +162,18 @@ export default function Admin() {
 // Helper Components
 function StatCard({ title, value, icon, color }) {
     const colors = {
-        blue: "text-blue-400 bg-blue-400/10",
-        purple: "text-purple-400 bg-purple-400/10",
-        indigo: "text-indigo-400 bg-indigo-400/10",
-        amber: "text-amber-400 bg-amber-400/10",
+        blue: "text-blue-600 bg-blue-100",
+        purple: "text-purple-600 bg-purple-100",
+        indigo: "text-teal-600 bg-teal-100",
+        amber: "text-amber-600 bg-amber-100",
     };
     
     return (
-        <div className="bg-slate-900/80 border border-slate-800 p-6 rounded-3xl hover:border-indigo-500/50 hover:bg-slate-900 transition-all group cursor-pointer">
+        <div className="bg-white shadow-sm border border-slate-200 p-6 rounded-3xl hover:border-teal-300 hover:bg-slate-50 transition-all group cursor-pointer">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform ${colors[color]}`}>
                 {icon}
             </div>
-            <p className="text-slate-400 text-sm font-medium">{title}</p>
+            <p className="text-slate-500 text-sm font-medium">{title}</p>
             <h4 className="text-3xl font-bold mt-1 tracking-tight">{value}</h4>
         </div>
     );

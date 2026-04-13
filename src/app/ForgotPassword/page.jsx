@@ -29,10 +29,10 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
-            <div className="bg-[#1e293b] p-8 rounded-3xl border border-slate-700 w-full max-w-md shadow-2xl">
-                <h2 className="text-2xl font-bold text-white mb-2">Reset <span className="text-indigo-400">Password</span></h2>
-                <p className="text-slate-400 text-sm mb-6">Enter your email to receive a temporary password.</p>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 w-full max-w-md shadow-md">
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Reset <span className="text-teal-600">Password</span></h2>
+                <p className="text-slate-600 text-sm mb-6">Enter your email to receive a temporary password.</p>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input 
@@ -40,13 +40,13 @@ export default function ForgotPassword() {
                         placeholder="Enter your registered email" 
                         required
                         disabled={loading}
-                        className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500 transition-all disabled:opacity-50"
+                        className="w-full bg-white border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:border-teal-500 transition-all disabled:opacity-50 placeholder-slate-400"
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <button 
                         type="submit" 
                         disabled={loading}
-                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20 disabled:bg-slate-700"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-xl font-bold transition-all shadow-sm disabled:bg-slate-300"
                     >
                         {loading ? "Processing..." : "Send Password"}
                     </button>
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
                 )}
                 
                 <div className="mt-6 text-center">
-                    <a href="/login" className="text-slate-500 hover:text-indigo-400 text-sm transition-colors">
+                    <a href="/login" className="text-slate-600 hover:text-teal-600 text-sm transition-colors">
                         ← Back to Login
                     </a>
                 </div>

@@ -86,21 +86,21 @@ function DashboardContent() {
     }
 
     return (
-        <div className="p-8 bg-[#0f172a] min-h-screen text-slate-200">
+        <div className="p-8 bg-slate-50 min-h-screen text-slate-900">
             <div className="max-w-6xl mx-auto">
                 
                 {/* Header Section */}
-                <div className="mb-8 border-l-4 border-indigo-500 pl-4 flex justify-between items-end">
+                <div className="mb-8 border-l-4 border-teal-500 pl-4 flex justify-between items-end">
                     <div>
-                        <h1 className="text-3xl font-extrabold text-white tracking-tight">
-                            {departmentName || "Department"} <span className="text-indigo-400">Interns</span>
+                        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                            {departmentName || "Department"} <span className="text-teal-600">Interns</span>
                         </h1>
-                        <p className="text-slate-400 mt-1">Real-time management for your assigned personnel.</p>
+                        <p className="text-slate-600 mt-1">Real-time management for your assigned personnel.</p>
                     </div>
                     {searchTerm && (
                         <button 
                             onClick={() => {setSearchTerm(""); router.replace('/Head/dashboard')}}
-                            className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 py-1 px-3 rounded-lg transition-colors border border-slate-700"
+                            className="text-xs bg-white hover:bg-slate-100 text-slate-700 py-1 px-3 rounded-lg transition-colors border border-slate-300 shadow-sm"
                         >
                             Clear Search ✕
                         </button>
@@ -113,15 +113,15 @@ function DashboardContent() {
                         <input 
                             type="text"
                             placeholder="Search by name or college..."
-                            className="w-full bg-[#1e293b] border border-slate-700 rounded-xl p-4 pl-12 text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                            className="w-full bg-white border border-slate-300 rounded-xl p-4 pl-12 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none transition-all shadow-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <span className="absolute left-4 top-4 text-slate-500">🔍</span>
+                        <span className="absolute left-4 top-4 text-slate-400">🔍</span>
                     </div>
                     
                     <select 
-                        className="bg-[#1e293b] border border-slate-700 rounded-xl p-4 text-white focus:border-indigo-500 outline-none cursor-pointer hover:bg-[#334155] transition-colors"
+                        className="bg-white border border-slate-300 rounded-xl p-4 text-slate-900 focus:border-teal-500 outline-none cursor-pointer hover:bg-slate-50 transition-colors shadow-sm"
                         value={genderFilter}
                         onChange={(e) => setGenderFilter(e.target.value)}
                     >
@@ -133,10 +133,10 @@ function DashboardContent() {
                 </div>
                 
                 {/* Table Container */}
-                <div className="overflow-hidden bg-[#1e293b] rounded-2xl border border-slate-800 shadow-2xl">
+                <div className="overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-sm">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="bg-[#334155]/50 text-slate-400 text-xs uppercase tracking-widest border-b border-slate-800">
+                            <tr className="bg-slate-100 text-slate-600 text-xs uppercase tracking-widest border-b border-slate-200">
                                 <th className="px-6 py-5 font-semibold">Intern Details</th>
                                 <th className="px-6 py-5 font-semibold">College</th>
                                 <th className="px-6 py-5 font-semibold text-center">Gender</th>
@@ -144,26 +144,26 @@ function DashboardContent() {
                                 {/* <th className="px-6 py-5 font-semibold text-center">Tasks Count</th> */}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800">
+                        <tbody className="divide-y divide-slate-200">
                             {filteredInterns.length > 0 ? (
                                 filteredInterns.map(intern => (
-                                    <tr key={intern.id} className="hover:bg-slate-800/50 transition-all group">
+                                    <tr key={intern.id} className="hover:bg-slate-50 transition-all group">
                                         <td className="px-6 py-5">
-                                            <div className="font-bold text-white group-hover:text-indigo-400 transition-colors">{intern.name}</div>
+                                            <div className="font-bold text-slate-900 group-hover:text-teal-700 transition-colors">{intern.name}</div>
                                             <div className="text-sm text-slate-500">{intern.email}</div>
                                         </td>
                                         <td className="px-6 py-5">
-                                            <span className="text-slate-300 text-sm italic">
+                                            <span className="text-slate-600 text-sm italic">
                                                 {intern.college || "Unspecified"}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter border ${
                                                 intern.gender === 'MALE' 
-                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                                                ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' 
                                                 : intern.gender === 'FEMALE' 
-                                                ? 'bg-pink-500/10 text-pink-400 border-pink-500/20' 
-                                                : 'bg-slate-700 text-slate-300 border-slate-600'
+                                                ? 'bg-pink-500/10 text-pink-600 border-pink-500/20' 
+                                                : 'bg-slate-100 text-slate-600 border-slate-200'
                                             }`}>
                                                 <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current"></span>
                                                 {intern.gender || "N/A"}
@@ -173,20 +173,26 @@ function DashboardContent() {
                                             <div className="flex items-center justify-center gap-3">
                                                 <button 
                                                     onClick={() => router.push(`/${intern.id}/view`)} 
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[80px]"
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors min-w-[80px]"
                                                 >
                                                     View
                                                 </button>
+                                                <button 
+                                                    onClick={() => router.push(`/${intern.id}/edit`)} 
+                                                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors min-w-[100px]"
+                                                >
+                                                    Edit
+                                                </button>
                                                 {/* <button 
                                                     onClick={() => router.push(`/Head/tasks?search=${encodeURIComponent(intern.name)}`)} 
-                                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[100px]"
+                                                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors min-w-[100px]"
                                                 >
                                                     Edit Task
                                                 </button> */}
                                             </div>
                                         </td>
                                         {/* <td className="px-6 py-5 text-center">
-                                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-sm">
+                                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 font-bold text-sm">
                                                 {intern.task_count || 0}
                                             </div>
                                         </td> */}

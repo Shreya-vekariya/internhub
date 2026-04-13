@@ -71,11 +71,11 @@ export default function Login() {
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-[#0a0a0c] p-4">
-			<div className="max-w-md w-full bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-slate-700">
+		<div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+			<div className="max-w-md w-full bg-white rounded-2xl shadow-md p-8 border border-slate-200">
 				<div className="text-center mb-8">
-					<h2 className="text-3xl font-bold text-white">Welcome Back</h2>
-					<p className="text-slate-400 mt-2">Please enter your details</p>
+					<h2 className="text-3xl font-bold text-slate-900">Welcome Back</h2>
+					<p className="text-slate-600 mt-2">Please enter your details</p>
 				</div>
 
 				<Formik
@@ -86,25 +86,25 @@ export default function Login() {
 						<Form className="space-y-6">
 							{/* Email Field */}
 							<div>
-								<label className="block text-sm font-medium text-slate-300 mb-1">
+								<label className="block text-sm font-medium text-slate-700 mb-1">
 									Email Address
 								</label>
 								<Field
 									name="email"
 									type="email"
 									placeholder="name@company.com"
-									className="w-full px-4 py-2.5 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-slate-700 outline-none transition-all text-white placeholder-slate-500"
+									className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-slate-900 placeholder-slate-400"
 								/>
 								<ErrorMessage
 									name="email"
 									component="div"
-									className="text-red-400 text-xs mt-1 font-medium"
+									className="text-red-500 text-xs mt-1 font-medium"
 								/>
 							</div>
 
 							{/* Password Field */}
 							<div>
-								<label className="block text-sm font-medium text-slate-300 mb-1">
+								<label className="block text-sm font-medium text-slate-700 mb-1">
 									Password
 								</label>
 						<div className="relative">
@@ -112,12 +112,12 @@ export default function Login() {
 								name="password"
 								type={showPassword ? "text" : "password"}
 								placeholder="••••••••"
-								className="w-full pr-12 px-4 py-2.5 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-slate-700 outline-none transition-all text-white placeholder-slate-500"
+								className="w-full pr-12 px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-slate-900 placeholder-slate-400"
 							/>
 							<button
 								type="button"
 								onClick={() => setShowPassword((prev) => !prev)}
-								className="absolute inset-y-0 right-0 inline-flex items-center justify-center w-12 text-slate-400 hover:text-slate-200"
+								className="absolute inset-y-0 right-0 inline-flex items-center justify-center w-12 text-slate-500 hover:text-slate-700"
 							>
 								{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
 							</button>
@@ -128,7 +128,7 @@ export default function Login() {
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md transition-all active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed">
+								className="w-full bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg shadow-md transition-all active:scale-[0.98] disabled:bg-teal-300 disabled:cursor-not-allowed">
 								{isSubmitting ? "Signing in..." : "Login"}
 							</button>
 						</Form>
@@ -140,18 +140,18 @@ export default function Login() {
 					<div
 						className={`mt-6 p-3 rounded-lg text-center text-sm font-medium ${
 							message.isError
-								? "bg-red-900/20 text-red-400 border border-red-800/30"
-								: "bg-emerald-900/20 text-emerald-400 border border-emerald-800/30"
+								? "bg-red-50 text-red-600 border border-red-200"
+								: "bg-emerald-50 text-emerald-600 border border-emerald-200"
 						}`}>
 						{message.text}
 					</div>
 				)}
 
-				<p className="mt-8 text-center text-sm text-slate-400">
+				<p className="mt-8 text-center text-sm text-slate-600">
 					Cannot remember password?{" "}
 					<Link
 						href="/ForgotPassword"
-						className="text-indigo-400 font-semibold hover:underline">
+						className="text-teal-600 font-semibold hover:underline">
 						Forgot Password
 					</Link>
 				</p>

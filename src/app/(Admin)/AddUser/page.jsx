@@ -184,49 +184,49 @@ The Your App Team
         }
     }, [formik.values.role]);
 
-    const inputClasses = (name) => `w-full px-4 py-2 border rounded-lg bg-white text-black outline-none transition-all ${
+    const inputClasses = (name) => `w-full px-4 py-2 border rounded-lg bg-white text-slate-900 outline-none transition-all shadow-sm ${
         formik.touched[name] && formik.errors[name]
             ? "border-red-500 ring-1 ring-red-500"
-            : "border-gray-300 focus:ring-2 focus:ring-blue-500"
+            : "border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
     }`;
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
-            <div className="max-w-2xl w-full bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+            <div className="max-w-2xl w-full bg-white rounded-xl shadow-sm p-8 border border-slate-200">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold text-white">Register New User</h2>
-                    <p className="text-gray-400 mt-2 text-sm">Fields marked with <span className="text-red-500">*</span> are required</p>
+                    <h2 className="text-3xl font-extrabold text-slate-900">Register New User</h2>
+                    <p className="text-slate-600 mt-2 text-sm">Fields marked with <span className="text-red-500">*</span> are required</p>
                 </div>
 
                 <form onSubmit={formik.handleSubmit} className="space-y-5">
                     {/* Basic Info Group */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-white mb-1">Full Name <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Full Name <span className="text-red-500">*</span></label>
                             <input type="text" {...formik.getFieldProps("name")} className={inputClasses("name")} placeholder="John Doe" />
                             {formik.touched.name && formik.errors.name && <p className="text-red-500 text-xs mt-1">{formik.errors.name}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-white mb-1">Email <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Email <span className="text-red-500">*</span></label>
                             <input type="email" {...formik.getFieldProps("email")} className={inputClasses("email")} placeholder="john@example.com" />
                             {formik.touched.email && formik.errors.email && <p className="text-red-500 text-xs mt-1">{formik.errors.email}</p>}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-white mb-1">Password <span className="text-red-500">*</span></label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Password <span className="text-red-500">*</span></label>
                         <input type="password" {...formik.getFieldProps("password")} className={inputClasses("password")} />
                         {formik.touched.password && formik.errors.password && <p className="text-red-500 text-xs mt-1">{formik.errors.password}</p>}
                     </div>
 
                     {/* Role Selection */}
                     <div>
-                        <label className="block text-sm font-medium text-white mb-2">Role <span className="text-red-500">*</span></label>
-                        <div className="flex gap-6 bg-gray-700 p-3 rounded-lg">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Role <span className="text-red-500">*</span></label>
+                        <div className="flex gap-6 bg-slate-50 border border-slate-200 p-3 rounded-lg shadow-sm">
                             {["Intern", "Head"].map((r) => (
-                                <label key={r} className="flex items-center gap-2 text-white cursor-pointer hover:text-blue-400">
-                                    <input type="radio" name="role" value={r} checked={formik.values.role === r} onChange={formik.handleChange} className="accent-blue-500 w-4 h-4" />
+                                <label key={r} className="flex items-center gap-2 text-slate-700 cursor-pointer hover:text-teal-600">
+                                    <input type="radio" name="role" value={r} checked={formik.values.role === r} onChange={formik.handleChange} className="accent-teal-500 w-4 h-4" />
                                     {r}
                                 </label>
                             ))}
@@ -237,7 +237,7 @@ The Your App Team
                     {/* Conditional: Department (Visible for Intern & Head) */}
                     {(formik.values.role === "Intern" || formik.values.role === "Head") && (
                         <div>
-                            <label className="block text-sm font-medium text-white mb-1">Department <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Department <span className="text-red-500">*</span></label>
                             <select {...formik.getFieldProps("dept_id")} className={inputClasses("dept_id")}>
                                 <option value="">Select Department</option>
                                 {(formik.values.role === "Head" ? availableDepts : depts).map((d) => (
@@ -250,28 +250,28 @@ The Your App Team
 
                     {/* Conditional: Intern Only Fields */}
                     {formik.values.role === "Intern" && (
-                        <div className="space-y-4 p-4 bg-gray-700/50 rounded-xl border border-gray-600">
+                        <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
                             <div>
-                                <label className="block text-sm font-medium text-white mb-1">College <span className="text-red-500">*</span></label>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">College <span className="text-red-500">*</span></label>
                                 <input type="text" {...formik.getFieldProps("college")} className={inputClasses("college")} />
                                 {formik.touched.college && formik.errors.college && <p className="text-red-500 text-xs mt-1">{formik.errors.college}</p>}
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-1">Start Date <span className="text-red-500">*</span></label>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Start Date <span className="text-red-500">*</span></label>
                                     <input type="date" {...formik.getFieldProps("start_date")} className={inputClasses("start_date")} />
                                     {formik.touched.start_date && formik.errors.start_date && <p className="text-red-500 text-xs mt-1">{formik.errors.start_date}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-1">End Date <span className="text-red-500">*</span></label>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">End Date <span className="text-red-500">*</span></label>
                                     <input type="date" {...formik.getFieldProps("end_date")} className={inputClasses("end_date")} />
                                     {formik.touched.end_date && formik.errors.end_date && <p className="text-red-500 text-xs mt-1">{formik.errors.end_date}</p>}
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-white mb-1">Internship Status</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Internship Status</label>
                                 <select {...formik.getFieldProps("status")} className={inputClasses("status")}>
                                     <option value="pending">Pending</option>
                                     <option value="ongoing">Ongoing</option>
@@ -280,11 +280,11 @@ The Your App Team
                             </div>
 
 							<div>
-								<label className="block text-sm font-medium text-white mb-2">Gender <span className="text-red-500">*</span></label>
+								<label className="block text-sm font-medium text-slate-700 mb-2">Gender <span className="text-red-500">*</span></label>
 								<div className="flex gap-6">
 									{["MALE", "FEMALE", "OTHER"].map((g) => (
-										<label key={g} className="flex items-center gap-2 text-white cursor-pointer">
-											<input type="radio" name="gender" value={g} checked={formik.values.gender === g} onChange={formik.handleChange} className="accent-blue-500" />
+										<label key={g} className="flex items-center gap-2 text-slate-700 cursor-pointer">
+											<input type="radio" name="gender" value={g} checked={formik.values.gender === g} onChange={formik.handleChange} className="accent-teal-500" />
 											{g.charAt(0) + g.slice(1).toLowerCase()}
 										</label>
 									))}
@@ -300,14 +300,14 @@ The Your App Team
                     <button
                         type="submit"
                         disabled={formik.isSubmitting}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all transform active:scale-95 disabled:bg-blue-800 disabled:opacity-50 mt-4 shadow-lg"
+                        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition-all transform active:scale-95 disabled:bg-teal-800 disabled:opacity-50 mt-4 shadow-sm"
                     >
                         {formik.isSubmitting ? "Processing..." : "Create User"}
                     </button>
 
 					<button
                         type="button"
-                        className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition-all transform active:scale-95 disabled:bg-blue-800 disabled:opacity-50 mt-4 shadow-lg"
+                        className="w-full bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold py-3 rounded-lg transition-all transform active:scale-95 mt-4 shadow-sm"
 						onClick={() => router.push("/Admin")}
 					>
                         Cancel

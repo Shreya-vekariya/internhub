@@ -108,31 +108,31 @@ export default function EditUser() {
         }
     };
 
-    if (loading) return <div className="p-10 text-white text-center font-bold">Fetching Database Records...</div>;
+    if (loading) return <div className="p-10 text-slate-900 text-center font-bold">Fetching Database Records...</div>;
 
     return (
-        <div className="min-h-screen p-8 text-white flex justify-center items-start bg-black">
-            <div className="w-full max-w-3xl bg-gray-900 p-8 rounded-2xl border border-gray-700 shadow-2xl">
-                <h1 className="text-3xl font-bold mb-8 text-blue-400 border-b border-gray-800 pb-4">Edit User Profile</h1>
+        <div className="min-h-screen p-8 text-slate-900 flex justify-center items-start bg-slate-50">
+            <div className="w-full max-w-3xl bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h1 className="text-3xl font-bold mb-8 text-teal-600 border-b border-slate-200 pb-4">Edit User Profile</h1>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Name & Email */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
                             <input
                                 type="text"
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full bg-white border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none shadow-sm text-slate-900"
                                 value={formData.name}
                                 onChange={handleNameChange}
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
                             <input
                                 type="email"
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full bg-white border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none shadow-sm text-slate-900"
                                 value={formData.email}
                                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                                 required
@@ -143,21 +143,20 @@ export default function EditUser() {
                     {/* Role, Dept, Gender */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Role</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
                             <select
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full bg-white border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm text-slate-900"
                                 value={formData.role}
                                 onChange={(e) => setFormData({...formData, role: e.target.value})}
                             >
                                 <option value="Intern">Intern</option>
                                 <option value="Head">Head</option>
-                                <option value="Admin">Admin</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Department</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Department</label>
                             <select
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 outline-none"
+                                className="w-full bg-white border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm text-slate-900"
                                 value={formData.department_id}
                                 onChange={(e) => setFormData({...formData, department_id: e.target.value})}
                             >
@@ -168,9 +167,9 @@ export default function EditUser() {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">Gender</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Gender</label>
                             <select
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 outline-none"
+                                className="w-full bg-white border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm text-slate-900"
                                 value={formData.gender}
                                 onChange={(e) => setFormData({...formData, gender: e.target.value})}
                             >
@@ -183,12 +182,12 @@ export default function EditUser() {
 
                     {/* Intern Specific Fields */}
                     {formData.role === "Intern" && (
-                        <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700 space-y-6">
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">College</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">College</label>
                                 <input
                                     type="text"
-                                    className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full bg-white border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none shadow-sm text-slate-900"
                                     value={formData.college}
                                     onChange={(e) => setFormData({...formData, college: e.target.value})}
                                 />
@@ -196,19 +195,19 @@ export default function EditUser() {
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Start Date</label>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Start Date</label>
                                     <input
                                         type="date"
-                                        className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+                                        className="w-full bg-white border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none shadow-sm text-slate-900"
                                         value={formData.start_date}
                                         onChange={(e) => setFormData({...formData, start_date: e.target.value})}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">End Date</label>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">End Date</label>
                                     <input
                                         type="date"
-                                        className={`w-full bg-gray-800 border rounded-lg p-3 outline-none transition-all ${dateError ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-600 focus:ring-2 focus:ring-blue-500'}`}
+                                        className={`w-full bg-white border rounded-lg p-3 outline-none transition-all shadow-sm text-slate-900 ${dateError ? 'border-red-500 ring-1 ring-red-500' : 'border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500'}`}
                                         value={formData.end_date}
                                         onChange={(e) => setFormData({...formData, end_date: e.target.value})}
                                     />
@@ -217,9 +216,9 @@ export default function EditUser() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                 <select
-                                    className="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 outline-none"
+                                    className="w-full bg-white border border-slate-300 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm text-slate-900"
                                     value={formData.status}
                                     onChange={(e) => setFormData({...formData, status: e.target.value})}
                                 >
@@ -231,18 +230,18 @@ export default function EditUser() {
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-4 pt-8 border-t border-gray-800 mt-4">
+                    <div className="flex justify-end gap-4 pt-8 border-t border-slate-200 mt-4">
                         <button
                             type="button"
                             onClick={() => router.back()}
-                            className="px-8 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors font-medium"
+                            className="px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg transition-colors font-medium shadow-sm"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={!!dateError}
-                            className={`px-8 py-3 rounded-lg font-bold shadow-lg transition-all ${dateError ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/20'}`}
+                            className={`px-8 py-3 rounded-lg font-bold shadow-sm transition-all ${dateError ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-teal-600 text-white hover:bg-teal-700'}`}
                         >
                             Save Changes
                         </button>
